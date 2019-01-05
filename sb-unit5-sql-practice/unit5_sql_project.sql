@@ -22,14 +22,16 @@ to your GitHub.
 Before starting with the questions, feel free to take your time,
 exploring the data, and getting acquainted with the 3 tables. */
 
-
-
 /* Q1: Some of the facilities charge a fee to members, but some do not.
 Please list the names of the facilities that do. */
-
+- Tennis Court 1
+- Tennis Court 2
+- Massage Room 1
+- Massage Room 2
+- Squash Court
 
 /* Q2: How many facilities do not charge a fee to members? */
-
+- 4 facilities (Badminton Court, Table Tennis, Snooker Table, Pool Table) 
 
 /* Q3: How can you produce a list of facilities that charge a fee to members,
 where the fee is less than 20% of the facility's monthly maintenance cost?
