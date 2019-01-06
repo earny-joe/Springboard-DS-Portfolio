@@ -17,34 +17,58 @@ exploring the data, and getting acquainted with the 3 tables. */
 
 /* Q1: Some of the facilities charge a fee to members, but some do not.
 Please list the names of the facilities that do. */
-- Tennis Court 1
-- Tennis Court 2
-- Massage Room 1
-- Massage Room 2
-- Squash Court
+SELECT `name`,`membercost`
+FROM `Facilities` 
+WHERE `membercost` != 0
+
+Output (name, membercost):
+- Tennis Court 1, 5.0
+- Tennis Court 2, 5.0
+- Massage Room 1, 9.9
+- Massage Room 2, 9.9
+- Squash Court, 3.5
 
 /* Q2: How many facilities do not charge a fee to members? */
-- 4 facilities (Badminton Court, Table Tennis, Snooker Table, Pool Table) 
+SELECT `name`,`membercost`
+FROM `Facilities` 
+WHERE `membercost` = 0
+
+Output (name, membercost):
+- Badminton Court, 0.0
+- Table Tennis, 0.0
+- Snooker Table, 0.0
+- Pool Table, 0.0
 
 /* Q3: How can you produce a list of facilities that charge a fee to members,
 where the fee is less than 20% of the facility's monthly maintenance cost?
 Return the facid, facility name, member cost, and monthly maintenance of the
 facilities in question. */
-
+SELECT `facid`,`name`,`membercost`,`monthlymaintenance`
+FROM `Facilities` 
+WHERE `membercost` < 0.20*`monthlymaintenance`
 
 /* Q4: How can you retrieve the details of facilities with ID 1 and 5?
 Write the query without using the OR operator. */
-
+SELECT `facid`, `name`, `membercost`, `guestcost`, `initialoutlay`, `monthlymaintenance`
+FROM `Facilities` 
+WHERE `facid` IN (1, 5)
 
 /* Q5: How can you produce a list of facilities, with each labelled as
 'cheap' or 'expensive', depending on if their monthly maintenance cost is
 more than $100? Return the name and monthly maintenance of the facilities
 in question. */
-
+SELECT `name`,  
+       `monthlymaintenance`,
+       CASE WHEN `monthlymaintenance` > 100 THEN 'expensive'
+       ELSE 'cheap' END AS cheap_or_exp
+  FROM `Facilities` 
+ ORDER BY `monthlymaintenance` DESC
 
 /* Q6: You'd like to get the first and last name of the last member(s)
 who signed up. Do not use the LIMIT clause for your solution. */
-
+SELECT `surname`, `firstname`, `joindate`
+FROM `Members`
+ORDER BY `joindate` DESC
 
 /* Q7: How can you produce a list of all members who have used a tennis court?
 Include in your output the name of the court, and the name of the member
