@@ -74,7 +74,12 @@ ORDER BY `joindate` DESC
 Include in your output the name of the court, and the name of the member
 formatted as a single column. Ensure no duplicate data, and order by
 the member name. */
-
+SELECT CONCAT(m.firstname, ' ', m.surname) AS member_name, f.name AS facility_name
+FROM country_club.Members m
+INNER JOIN country_club.Bookings b ON m.memid = b.memid
+INNER JOIN country_club.Facilities f ON b.facid = f.facid
+WHERE f.facid IN ('Tennis Court 1', 'Tennis Court 2')
+GROUP BY member_name
 
 /* Q8: How can you produce a list of bookings on the day of 2012-09-14 which
 will cost the member (or guest) more than $30? Remember that guests have
@@ -82,7 +87,21 @@ different costs to members (the listed costs are per half-hour 'slot'), and
 the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
-
+SELECT members.surname AS member_name, facilities.name AS facility_name, facilities.guestcost * bookings.slots AS booking_cost
+FROM country_club.Bookings bookings
+JOIN country_club.Facilities facilities ON bookings.facid = facilities.facid
+JOIN country_club.Members members ON members.memid = bookings.memid
+WHERE LEFT(bookings.starttime, 10) = '2012-09-14'
+AND members.memid = 0
+UNION
+SELECT CONCAT(members.firstname, ' ', members.surname) AS member_name, facilities.name AS facility_name, SUM(facilities.membercost * bookings.slots) AS booking_cost
+FROM country_club.Bookings bookings
+JOIN country_club.Facilities facilities ON bookings.facid = facilities.facid
+JOIN country_club.Members members ON members.memid = bookings.memid
+WHERE LEFT(bookings.starttime, 10) = '2012-09-14'
+AND members.memid != 0
+HAVING booking_cost > 30
+ORDER BY booking_cost DESC
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
 
