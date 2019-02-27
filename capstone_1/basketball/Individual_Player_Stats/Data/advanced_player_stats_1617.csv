@@ -1,13 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
-{\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
-{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\deftab720
-\pard\pardeftab720\sl320\partightenfactor0
-
-\f0\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 Rk,Player,Pos,Age,Tm,G,MP,PER,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,,OWS,DWS,WS,WS/48,,OBPM,DBPM,BPM,VORP\
+Rk,Player,Pos,Age,Tm,G,MP,PER,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,,OWS,DWS,WS,WS/48,,OBPM,DBPM,BPM,VORP\
 1,Alex Abrines\\abrinal01,SG,23,OKC,68,1055,10.1,.560,.724,.144,1.9,7.1,4.5,5.5,1.7,0.6,8.3,15.9,,1.2,0.9,2.1,.096,,-0.3,-2.2,-2.5,-0.1\
 2,Quincy Acy\\acyqu01,PF,26,TOT,38,558,11.8,.565,.529,.353,3.9,18.0,11.0,4.9,1.2,2.0,9.7,16.8,,0.5,0.5,0.9,.082,,-1.8,-1.2,-3.0,-0.1\
 3,Steven Adams\\adamsst01,C,23,OKC,80,2389,16.5,.589,.002,.392,13.0,15.4,14.2,5.4,1.8,2.6,16.0,16.2,,3.3,3.1,6.5,.130,,-0.7,1.2,0.6,1.5\
