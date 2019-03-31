@@ -1,0 +1,11 @@
+API_KEY = 'QMmxUeBvA3RG6xB2nmfH'
+
+"https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?column_index=4&start_date=2017-01-01&end_date=2017-01-02&transform=asc&api_key=QMmxUeBvA3RG6xB2nmfH"
+
+"https://www.quandl.com/api/v3/datasets/FSE/AFX_X/data.json?api_key=QMmxUeBvA3RG6xB2nmfH"
+
+https://docs.quandl.com/docs/in-depth-usage
+
+"https://www.quandl.com/api/v3/datasets/FSE/AFX_X/data.json?start_date=2017-01-01&end_date=2017-12-31&api_key=QMmxUeBvA3RG6xB2nmfH"
+
+"https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?column_index=4&start_date=2017-01-01&end_date=2017-12-31&collapse=daily&transform=none&api_key=QMmxUeBvA3RG6xB2nmfH"
