@@ -9,7 +9,6 @@ def data_processing(path, pathology, seed, sample_pct):
     # read in csv files for training and validation sets
     train_df = pd.read_csv(path/'CheXpert-v1.0-small/train.csv')
     valid_df = pd.read_csv(path/'CheXpert-v1.0-small/valid.csv')
-    print()
     print(train_df.shape)
     print(valid_df.shape)
     print('-' * 30)
