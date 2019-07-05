@@ -75,6 +75,52 @@ def analyze_pathologies(train_df):
         print('-' * 30)
         print(train_df[pathology].value_counts(normalize=True))
         print('')
+        
+def uncertainty_dict(pathology_list, train_df):
+    '''function that creates a dictionary of pathologies and the number of their associated uncertainty labels'''
+    uncertainty_dict = {}
+    for pathology in pathology_list:
+        uncertainty_value = len(train_df[train_df[pathology] == -1])
+        total_uncertainty = round(uncertainty_value / len(train_df) * 100, 2)
+        uncertainty_dict[pathology] = uncertainty_value
+        print('{}: {} or {}% of observations in that column.'.format(pathology, uncertainty_value, total_uncertainty))
+        
+    return uncertainty_dict
+
+def negative_dict(pathology_list, train_df):
+    '''function that creates a dictionary of pathologies and the number of their associated uncertainty labels'''
+    negative_dict = {}
+    for pathology in pathology_list:
+        negative_value = len(train_df[train_df[pathology] == 0])
+        total_negative = round(negative_value / len(train_df) * 100, 2)
+        negative_dict[pathology] = negative_value
+        print('{}: {} or {}% of observations in that column.'.format(pathology, negative_value, total_negative))
+        
+    return negative_dict
+
+def positive_dict(pathology_list, train_df):
+    '''function that creates a dictionary of pathologies and the number of their associated uncertainty labels'''
+    positive_dict = {}
+    for pathology in pathology_list:
+        positive_value = len(train_df[train_df[pathology] == 1])
+        total_positive = round(positive_value / len(train_df) * 100, 2)
+        positive_dict[pathology] = positive_value
+        print('{}: {} or {}% of observations in that column.'.format(pathology, positive_value, total_positive))
+        
+    return positive_dict
+    
+def plt_dict(dictionary, label):
+    '''function that plots inputed dictionary'''
+    plt.figure(figsize = (14,6))
+    plt.bar(range(len(dictionary)), sorted(dictionary.values(), reverse=True), color='steelblue', edgecolor='black')
+    plt.xticks(range(len(dictionary)), sorted(dictionary, key=dictionary.get, reverse=True), rotation=90)
+    plt.title('Number of {} Labels for Each Pathology'.format(label))
+    
+
+    
+    
+    
+    
     
     
     
