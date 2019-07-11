@@ -9,7 +9,7 @@ import torch
 from fastai.vision import *
 from fastai.callbacks.hooks import *
 from fastai.utils.mem import *
-from fastai.callbacks import EarlyStoppingCallback
+from fastai.callbacks import EarlyStoppingCallback, SaveModelCallback
 
 def load_data(path, seed, percent=0.05):
     # read in csv files for training and validation sets
@@ -108,9 +108,9 @@ def uignore(df, pathology):
     return df
 
 
-def get_src(df, path, pathology):
+def get_src(df, path, feature_col):
     '''function to convert dataframe to fast.ai ImageList'''
-    src = (ImageList.from_df(df=df, path=path, folder='.', suffix='').split_from_df('valid').label_from_df(pathology))
+    src = (ImageList.from_df(df=df, path=path, folder='.', suffix='').split_from_df('valid').label_from_df(feature_col))
     
     return src
 
@@ -125,9 +125,15 @@ def get_data(size, src):
         bs=16
     print(f"using bs={bs}, have {free}MB of GPU RAM free.")
     print('-' * 30)
-    data = (src.transform(get_transforms(do_flip=False, max_rotate=None, max_zoom=0., max_lighting=0.3, max_warp=0,
-                                         p_affine=0.5, p_lighting=0.5, xtra_tfms=[]), size=size,
-                          padding_mode='zeros').databunch(bs=bs).normalize(imagenet_stats))
+    data = (src.transform(get_transforms(do_flip=False,
+                                             max_rotate=None, 
+                                             max_zoom=0., 
+                                             max_lighting=0.3, 
+                                             max_warp=0,
+                                             p_affine=0.5, 
+                                             p_lighting=0.5, 
+                                             xtra_tfms=[]), 
+                              size=size, padding_mode='zeros').databunch(bs=bs).normalize(imagenet_stats))
     print('Data ready.')
     
     return data

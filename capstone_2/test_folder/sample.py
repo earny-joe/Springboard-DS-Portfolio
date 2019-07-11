@@ -91,6 +91,34 @@ def undersample_and_prep(train_df, valid_df):
     print('Concatenated undersampled training data set with validation data.')
     print('Returning full data set.')
     return full_df
+
+def oversample_and_prep(train_df, valid_df, frac = 0.5):
+    '''function that oversamples pathologies majority class'''
+    count_class_0, count_class_1 = train_df['Cardiomegaly'].value_counts()
+    # Divide by class
+    df_class_0 = train_df[train_df['Cardiomegaly'] == 0]
+    df_class_1 = train_df[train_df['Cardiomegaly'] == 1]
+    print('Created two new data sets, one with positive observations and the other with the negatives.')
+    print('The shape of dataframe containing 0 (negative) labels: {}'.format(df_class_0.shape))
+    print('The shape of dataframe containing 1 (positive) labels: {}'.format(df_class_1.shape))
+    print('-' * 30)
+    # oversample class 1 according to count of class 0
+    df_class_1_over = df_class_1.sample(count_class_0, replace=True)
+    df_test_over = pd.concat([df_class_0, df_class_1_over], axis=0)
+    print('Random over-sampling: \n{}'.format(df_test_over['Cardiomegaly'].value_counts()))
+    print('-' * 30)
+    # randomly sample according to inputted % from df_test_over to new dataframe and reset index (df_test_over is VERY LARGE)
+    df_test_over_sample = df_test_over.sample(frac=frac).reset_index(drop=True)
+    sample_class_0, sample_class_1 = df_test_over_sample['Cardiomegaly'].value_counts()
+    print('Sampled from over-sampled dataframe.')
+    print('Value Counts for Cardiomegaly column in new dataframe: \n{}'.format(df_test_over_sample['Cardiomegaly'].value_counts()))
+    print('-' * 30)
+    # concat undersampled train_df and valid_df together
+    full_df = pd.concat([df_test_over_sample, valid_df])
+    print('Concatenated oversampled training data set with validation data.')
+    print('Returning full data set.')
+    
+    return full_df
     
 
 def uignore(df, pathology):

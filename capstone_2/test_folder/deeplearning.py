@@ -54,7 +54,7 @@ def baseline_setup(path, train_df, valid_df, pathology, default_transforms=True,
     
     return data
 
-def lr_finder_plot(learn, start_lr=1e-8, end_lr=100, suggestion=True):
+def lr_finder_plot(learn, start_lr=1e-7, end_lr=100, suggestion=True):
     learn.lr_find(start_lr=start_lr, end_lr=end_lr)
     learn.recorder.plot(suggestion=suggestion)
 
