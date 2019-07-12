@@ -116,6 +116,7 @@ def plt_dict(dictionary, label):
     plt.xticks(range(len(dictionary)), sorted(dictionary, key=dictionary.get, reverse=True), rotation=90)
     plt.title('Number of {} Labels for Each Pathology'.format(label))
     
+    
 
     
     

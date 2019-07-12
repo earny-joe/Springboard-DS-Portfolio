@@ -114,24 +114,31 @@ def get_src(df, path, feature_col):
     
     return src
 
-def get_data(size, src):
+def get_data(size, src, small_batch = False, default_trans = False):
     '''function to return data ready for model training'''
     # determine batch_size based on GPU memory
     free = gpu_mem_get_free_no_cache()
     # the max size of bs depends on the available GPU RAM
-    if free > 8200: 
-        bs=32
+    if small_batch == True:
+        bs = 2
     else:
-        bs=16
+        if free > 8200: 
+            bs=32
+        else:
+            bs=16
     print(f"using bs={bs}, have {free}MB of GPU RAM free.")
     print('-' * 30)
-    data = (src.transform(get_transforms(do_flip=False,
+    if default_trans == True:
+        data = (src.transform(get_transforms(do_flip=False), size=size, padding_mode='zeros')
+                .databunch(bs=bs).normalize(imagenet_stats))
+    else:
+        data = (src.transform(get_transforms(do_flip=False,
                                              max_rotate=None, 
                                              max_zoom=0., 
                                              max_lighting=0.3, 
                                              max_warp=0,
                                              p_affine=0.5, 
-                                             p_lighting=0.5, 
+                                             p_lighting=0.75, 
                                              xtra_tfms=[]), 
                               size=size, padding_mode='zeros').databunch(bs=bs).normalize(imagenet_stats))
     print('Data ready.')
