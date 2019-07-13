@@ -1,3 +1,4 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
@@ -9,15 +10,17 @@ def load_data(path):
     file = path + '/data/logins.json'
     # create logins_df using pandas.read_json
     logins_df = pd.read_json(file)
+    logins_df.set_index('login_time', inplace=True)
+    logins_df['count'] = 1
     
     return logins_df
 
 def data_prep(df):
     '''function that preps data into suitable format'''
-    df.set_index('login_time', inplace=True)
-    df['count'] = 1
     # Aggregate login counts based on 15-minute time intervals
     resample_df = df.resample('15T', label='right').sum()
+    # add time column
+    resample_df['time'] = pd.to_datetime(resample_df.index)
     # fill missing values with 0
     resample_df = resample_df.fillna(0)
     
@@ -26,18 +29,17 @@ def data_prep(df):
 
 def extract_data_info(df):
     '''Extracts time information from logins_df'''
-    df['time'] = pd.to_datetime(df.index)
-    df['month'] = df['login_time'].dt.month
-    df['day'] = df['login_time'].dt.day
-    df['hour'] = df['login_time'].dt.hour
-    df['week'] = df['login_time'].dt.week
-    df['weekday'] = df['login_time'].dt.weekday
+    df['month'] = df['time'].dt.month
+    df['day'] = df['time'].dt.day
+    df['hour'] = df['time'].dt.hour
+    df['week'] = df['time'].dt.week
+    df['weekday'] = df['time'].dt.weekday
     
     return df
 
 def plot_month_day_hour(logins_df):
     '''plots bar graphs of the number of observations for each month/day/hour'''
-    for col in list(logins_df.columns[1:4]):
+    for col in list(logins_df.columns[2:]):
         plt.figure(figsize=(10,6))
         sns.countplot(x=col, data=logins_df)
         plt.title(str(col).upper())
