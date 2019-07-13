@@ -12,20 +12,36 @@ def load_data(path):
     
     return logins_df
 
-def extract_data_info(logins_df):
-    '''Extracts time information from logins_df'''
-    logins_df['month'] = logins_df['login_time'].dt.month
-    logins_df['day'] = logins_df['login_time'].dt.day
-    logins_df['hour'] = logins_df['login_time'].dt.hour
-    logins_df['minute'] = logins_df['login_time'].dt.minute
+def data_prep(df):
+    '''function that preps data into suitable format'''
+    df.set_index('login_time', inplace=True)
+    df['count'] = 1
+    # Aggregate login counts based on 15-minute time intervals
+    resample_df = df.resample('15T', label='right').sum()
+    # fill missing values with 0
+    resample_df = resample_df.fillna(0)
     
-    return logins_df
+    return resample_df
+
+
+def extract_data_info(df):
+    '''Extracts time information from logins_df'''
+    df['time'] = pd.to_datetime(df.index)
+    df['month'] = df['login_time'].dt.month
+    df['day'] = df['login_time'].dt.day
+    df['hour'] = df['login_time'].dt.hour
+    df['week'] = df['login_time'].dt.week
+    df['weekday'] = df['login_time'].dt.weekday
+    
+    return df
 
 def plot_month_day_hour(logins_df):
     '''plots bar graphs of the number of observations for each month/day/hour'''
     for col in list(logins_df.columns[1:4]):
-        plt.figure(figsize=(8,6))
+        plt.figure(figsize=(10,6))
         sns.countplot(x=col, data=logins_df)
+        plt.title(str(col).upper())
+        
     
 def resample_15_min(logins_df):
     '''function that takes logins_df and returns observations resampled into 15 min segments'''
@@ -37,12 +53,13 @@ def resample_15_min(logins_df):
     interval_df.drop(['month', 'day', 'hour', 'minute'], axis=1, inplace=True)
     # resample with 15 min intervals
     interval_df = interval_df.resample('15T').sum()
+    interval_df['month'] = interval_df['login_time'].dt.month
     
     return interval_df
 
 def plot_series(interval_df):
-    plt.figure(figsize=(14,6))
-    plt.plot(interval_df)
+    plt.figure(figsize=(16,6))
+    plt.plot(interval_df, linewidth=1.5)
     plt.xticks(rotation=45)
     plt.title('Logins')
     
@@ -61,8 +78,14 @@ def month_daysofweek(df):
     return df
 
 def bar_plot_graph(df, col):
-    df[col].value_counts().plot(kind='bar', figsize=(8,6))
-    plt.title(col)
+    plt.figure(figsize=(8,6))
+    df[col].value_counts().plot(kind='bar', color='steelblue', edgecolor='black')
+    plt.title(str(col).replace('_', ' ').upper())
+    plt.xticks(rotation=0)
+    
+
+
+
     
     
     
