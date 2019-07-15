@@ -1,6 +1,8 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import calendar
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
@@ -18,7 +20,7 @@ def load_data(path):
 def data_prep(df):
     '''function that preps data into suitable format'''
     # Aggregate login counts based on 15-minute time intervals
-    resample_df = df.resample('15T', label='right').sum()
+    resample_df = df.resample('15T').sum()
     # add time column
     resample_df['time'] = pd.to_datetime(resample_df.index)
     # fill missing values with 0
@@ -44,6 +46,44 @@ def plot_month_day_hour(logins_df):
         sns.countplot(x=col, data=logins_df)
         plt.title(str(col).upper())
         
+def groupby_plot(df, timeframe, weekday=False):
+    '''function that will group by a time period, return the count by that period, and plot the results'''
+    if weekday == True:
+        nweek = 16
+        plt.figure(figsize=(12,8))
+        ax = (df.groupby('weekday')['count'].sum()/nweek).plot(kind = 'bar', color='steelblue', edgecolor='black')
+        plt.title("Average Login per Weekday")
+        plt.xlabel("Weekday")
+        plt.ylabel("Number of logins")
+        plt.xticks(rotation=45)
+        ax.set_xticklabels([calendar.day_name[d] for d in range(7)])
+    else:
+        print('Grouping by ' + str(timeframe).capitalize())
+        print(df.groupby(timeframe)['count'].aggregate(np.sum))
+        print('-' * 30)
+        plt.figure(figsize=(12,8))
+        df.groupby(timeframe)['count'].sum().plot(kind = 'bar', color='steelblue', edgecolor='black')
+        plt.title('Logins by ' + str(timeframe).capitalize())
+        plt.xlabel(str(timeframe).capitalize())
+        plt.ylabel('Number of Logins')
+        plt.xticks(rotation = 0)
+        
+def resample_df(df, timeframe):
+    '''resamples dataframe according to specified time frame'''
+    resample_df = df.resample(timeframe).sum()
+    # add data and weekday columns
+    return resample_df
+
+def boxplot_graph(df, x, y, timeframe):
+    '''constructs boxplot given user input'''
+    plt.figure(figsize=(12,8))
+    ax = sns.boxplot(x=x, y=y, data=df)
+    plt.title("Login Number of " + str(timeframe).capitalize())
+    plt.xlabel(str(timeframe).capitalize())
+    plt.ylabel("Number of logins")
+    plt.xticks(rotation=45)
+    ax.set_xticklabels([calendar.day_name[d] for d in range(7)])
+           
     
 def resample_15_min(logins_df):
     '''function that takes logins_df and returns observations resampled into 15 min segments'''
