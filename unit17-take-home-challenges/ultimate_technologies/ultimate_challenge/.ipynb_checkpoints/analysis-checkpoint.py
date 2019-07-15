@@ -17,10 +17,10 @@ def load_data(path):
     
     return logins_df
 
-def data_prep(df):
+def data_prep(df, timeframe):
     '''function that preps data into suitable format'''
     # Aggregate login counts based on 15-minute time intervals
-    resample_df = df.resample('15T').sum()
+    resample_df = df.resample(timeframe).sum()
     # add time column
     resample_df['time'] = pd.to_datetime(resample_df.index)
     # fill missing values with 0
@@ -74,10 +74,28 @@ def resample_df(df, timeframe):
     # add data and weekday columns
     return resample_df
 
-def boxplot_graph(df, x, y, timeframe):
+def boxplot_graph(df, x, y, timeframe, hourly=False):
     '''constructs boxplot given user input'''
+    if hourly == True:
+        plt.figure(figsize=(14,8))
+        sns.boxplot(x='hour', y='count', data=df)
+        plt.title("Hourly Logins")
+        plt.xlabel("Hour")
+        plt.ylabel("Number of logins")
+        plt.xticks(rotation=0)
+    else:
+        plt.figure(figsize=(12,8))
+        ax = sns.boxplot(x=x, y=y, data=df)
+        plt.title("Login Number of " + str(timeframe).capitalize())
+        plt.xlabel(str(timeframe).capitalize())
+        plt.ylabel("Number of logins")
+        plt.xticks(rotation=45)
+        ax.set_xticklabels([calendar.day_name[d] for d in range(7)])
+    
+def swarmplot_graph(df, x, y, timeframe):
+    '''constructs swarmplot given user input'''
     plt.figure(figsize=(12,8))
-    ax = sns.boxplot(x=x, y=y, data=df)
+    ax = sns.swarmplot(x=x, y=y, data=df, size=10)
     plt.title("Login Number of " + str(timeframe).capitalize())
     plt.xlabel(str(timeframe).capitalize())
     plt.ylabel("Number of logins")
