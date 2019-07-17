@@ -17,6 +17,8 @@ def load_data(path):
     
     return logins_df
 
+
+
 def data_prep(df, timeframe):
     '''function that preps data into suitable format'''
     # Aggregate login counts based on 15-minute time intervals
