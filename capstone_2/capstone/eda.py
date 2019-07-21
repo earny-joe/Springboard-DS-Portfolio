@@ -115,6 +115,24 @@ def plt_dict(dictionary, label):
     plt.bar(range(len(dictionary)), sorted(dictionary.values(), reverse=True), color='steelblue', edgecolor='black')
     plt.xticks(range(len(dictionary)), sorted(dictionary, key=dictionary.get, reverse=True), rotation=90)
     plt.title('Number of {} Labels for Each Pathology'.format(label))
+
+def uncertain_features(row, pathologies):
+    '''function that detects uncertain observations in each row and then outputs string of uncertain labels'''
+    feature_list = []
+    for feature in pathologies:
+        if row[feature] == -1:
+            feature_list.append(feature)
+            
+    return ';'.join(feature_list)
+
+def uncertain_col(df, pathologies):
+    '''applies uncertain_features function to dataframe input by user, and creates a new column'''
+    df['uncertain_features'] = df.apply(uncertain_features, axis = 1)
+    # replace '' with None to represent no uncertain features found
+    df['uncertain_features'] = df['uncertain_features'].replace('', 'None')
+    
+    return df
+    
     
     
 
