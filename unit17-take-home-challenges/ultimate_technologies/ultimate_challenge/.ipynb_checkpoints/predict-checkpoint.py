@@ -3,6 +3,10 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, cross_validate, cross_val_score, RandomizedSearchCV
+from sklearn.metrics import roc_curve, roc_auc_score
+from time import time
 
 def load_data(path):
     '''function that loads the data'''
@@ -140,3 +144,167 @@ def compute_roc_auc(index):
     fpr, tpr, thresholds = roc_curve(y.iloc[index], y_predict)
     auc_score = auc(fpr, tpr)
     return fpr, tpr, auc_score
+
+def ml_baseline(X, y, random_state, title):
+    '''function that splits data, fits baseline classifier, cross-validates and then prints out performance metrics'''
+    # Split the data into 70% train and 30% test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+    # initiate classifier
+    classifier = RandomForestClassifier(n_estimators = 100, random_state=random_state, n_jobs=-1)
+    # fit random forest classifier
+    classifier.fit(X_train, y_train)
+    # cross validate and record performance metrics: roc_auc, precision and recall
+    classifier_scores = cross_validate(classifier, X_train, y_train, cv=5,
+                                   scoring=['roc_auc', 'precision', 'recall', 'accuracy'],
+                                   n_jobs=-1)
+    print('Mean ROC-AUC score of test set for {}: {:.3f}'.format(title, classifier_scores['test_roc_auc'].mean()))
+    print('Mean Precision score of test set for {}: {:.3f}'.format(title, classifier_scores['test_precision'].mean()))
+    print('Mean Recall score of test set for {}: {:.3f}'.format(title, classifier_scores['test_recall'].mean()))
+    # create series that stores feature importance from classifier model
+    feature_imp = pd.Series(classifier.feature_importances_, index=X.columns).sort_values(ascending=False)
+    # plot important features
+    plt.figure(figsize=(12,6))
+    sns.barplot(x=feature_imp[:6], y=feature_imp.index[:6], edgecolor='black')
+    plt.xlabel('Feature Importance Score')
+    plt.ylabel('Features')
+    plt.title("Visualizing Important Features")
+    # plot AUROC curve
+    # predict probabilities
+    probs = classifier.predict_proba(X_test)
+    # keep probabilities for positive outcome only
+    probs = probs[:, 1]
+    # calculate roc curve
+    fpr, tpr, thresholds = roc_curve(y_test, probs)
+    #calculate AUC
+    auc = roc_auc_score(y_test, probs)
+    plt.figure(figsize=(12,8))
+    # plot no skill
+    plt.plot([0, 1], [0, 1], linestyle='--')
+    # plot the roc curve for the model
+    plt.plot(fpr, tpr, marker='.')
+    plt.title('AUROC Curve for {} Model'.format(title))
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    # show the plot
+    plt.show()
+    
+    return classifier, classifier_scores
+
+def report(results, n_top=3):
+    '''#Utility function to report best scores'''
+    for i in range(1, n_top + 1):
+        candidates = np.flatnonzero(results['rank_test_AUC'] == i)
+        for candidate in candidates:
+            print("Model with rank: {0}".format(i))
+            print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+                  results['mean_test_AUC'][candidate],
+                  results['std_test_AUC'][candidate]))
+            print("Parameters: {0}".format(results['params'][candidate]))
+            print("")
+            
+def gridsearch_params():
+    '''function that returns dictionary of assorted hyperparameter values to test in GridSearchCV'''
+    # number of trees in the forest
+    n_estimators = [int(x) for x in np.linspace(start = 10, stop = 100, num = 10)]
+    # number of features to consider at every split
+    max_features = ['auto', 'sqrt']
+    # max number of levels in trees
+    max_depth = [int(x) for x in np.linspace(10, 100, num = 10)]
+    # minimum number of samples required to split a node
+    min_samples_split = [2, 5, 10]
+    # min number of samples required at each leaf node
+    min_samples_leaf = [1, 2, 4]
+    # method of selecting samples for training each tree
+    bootstrap = [True, False]
+    # create random grid
+    random_grid = {'n_estimators': n_estimators, #number of trees in the forest
+               'max_features': max_features, # number of features to consider when looking for the best split
+               'max_depth': max_depth, # max depth of the tree
+               'min_samples_split': min_samples_split, # min number of samples required to split an internal node
+               'min_samples_leaf': min_samples_leaf, # # min number of samples required to be at a leaf node
+               'bootstrap': bootstrap
+              }
+    
+    return random_grid
+
+def randomizedsearchCV(estimator, X, y, n_iter_search, param_distributions, random_state):
+    '''function that runs randomized search of input param_distributions'''
+    def report(results, n_top=3):
+        for i in range(1, n_top + 1):
+            candidates = np.flatnonzero(results['rank_test_AUC'] == i)
+            for candidate in candidates:
+                print("Model with rank: {0}".format(i))
+                print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+                    results['mean_test_AUC'][candidate],
+                    results['std_test_AUC'][candidate]))
+                print("Parameters: {0}".format(results['params'][candidate]))
+                print("")
+
+    # number of iterations 
+    n_iter_search = n_iter_search
+    # metric we're going to use for scoring
+    scoring = {'AUC': 'roc_auc'}
+    # run randomized search
+    random_search = RandomizedSearchCV(estimator = estimator, param_distributions=param_distributions, 
+                               n_iter=n_iter_search, scoring=scoring, cv=5, refit='AUC', verbose=1, random_state=random_state, n_jobs=-1)
+    start = time()
+    random_search.fit(X, y)
+    print("RandomizedSearchCV took %.2f seconds for %d candidates"
+      " parameter settings." % ((time() - start), n_iter_search))
+    n_estimators = random_search.best_params_['n_estimators']
+    min_samples_split = random_search.best_params_['min_samples_split']
+    min_samples_leaf = random_search.best_params_['min_samples_leaf']
+    max_features = random_search.best_params_['max_features']
+    max_depth = random_search.best_params_['max_depth']
+    bootstrap = random_search.best_params_['bootstrap']
+    # print report of best cv results
+    report(random_search.cv_results_)
+                       
+    return n_estimators, min_samples_split, min_samples_leaf, max_features, max_depth, bootstrap
+
+
+def ml_bestparams(X, y, random_state, n_estimators, min_samples_split, min_samples_leaf, max_features, max_depth, bootstrap, title):
+    '''function that splits data, fits baseline classifier, cross-validates and then prints out performance metrics'''
+    # Split the data into 70% train and 30% test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+    # initiate classifier
+    classifier = RandomForestClassifier(n_estimators = n_estimators, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                        max_features=max_features, max_depth=max_depth, random_state=random_state, n_jobs=-1)
+    # fit random forest classifier
+    classifier.fit(X_train, y_train)
+    # cross validate and record performance metrics: roc_auc, precision and recall
+    classifier_scores = cross_validate(classifier, X_train, y_train, cv=5,
+                                   scoring=['roc_auc', 'precision', 'recall', 'accuracy'],
+                                   n_jobs=-1)
+    print('Mean ROC-AUC score of test set for {}: {:.3f}'.format(title, classifier_scores['test_roc_auc'].mean()))
+    print('Mean Precision score of test set for {}: {:.3f}'.format(title, classifier_scores['test_precision'].mean()))
+    print('Mean Recall score of test set for {}: {:.3f}'.format(title, classifier_scores['test_recall'].mean()))
+    # create series that stores feature importance from classifier model
+    feature_imp = pd.Series(classifier.feature_importances_, index=X.columns).sort_values(ascending=False)
+    # plot important features
+    plt.figure(figsize=(12,6))
+    sns.barplot(x=feature_imp[:6], y=feature_imp.index[:6], edgecolor='black')
+    plt.xlabel('Feature Importance Score')
+    plt.ylabel('Features')
+    plt.title("Visualizing Important Features")
+    # plot AUROC curve
+    # predict probabilities
+    probs = classifier.predict_proba(X_test)
+    # keep probabilities for positive outcome only
+    probs = probs[:, 1]
+    # calculate roc curve
+    fpr, tpr, thresholds = roc_curve(y_test, probs)
+    #calculate AUC
+    auc = roc_auc_score(y_test, probs)
+    plt.figure(figsize=(12,8))
+    # plot no skill
+    plt.plot([0, 1], [0, 1], linestyle='--')
+    # plot the roc curve for the model
+    plt.plot(fpr, tpr, marker='.')
+    plt.title('AUROC Curve for {} Model'.format(title))
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    # show the plot
+    plt.show()
+    
+    return classifier, classifier_scores
