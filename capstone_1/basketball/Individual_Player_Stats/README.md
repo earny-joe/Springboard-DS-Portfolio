@@ -13,4 +13,6 @@ The primary purpose of this project is to solve the following question: "can we 
     - `playground_nbs`: contains experimental Jupyter notebooks to test code/theories
 - `Machine_Learning`: contains notebooks related to generation of machine learning models that predict win shares per 48 minutes
     - [`machine-learning.ipynb`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_1/basketball/Individual_Player_Stats/Machine_Learning/machine-learning.ipynb): Jupyter notebook detailing the development of multiple machine learning models, which utilize multiple linear regresssion, ridge regression, and random forest frameworks
+- `Reports`: folder containing slide deck and milestone reports/final analysis of project
+    - 
    
