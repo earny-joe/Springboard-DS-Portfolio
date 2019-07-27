@@ -14,5 +14,6 @@ The primary purpose of this project is to solve the following question: "can we 
 - `Machine_Learning`: contains notebooks related to generation of machine learning models that predict win shares per 48 minutes
     - [`machine-learning.ipynb`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_1/basketball/Individual_Player_Stats/Machine_Learning/machine-learning.ipynb): Jupyter notebook detailing the development of multiple machine learning models, which utilize multiple linear regresssion, ridge regression, and random forest frameworks
 - `Reports`: folder containing slide deck and milestone reports/final analysis of project
-    - 
+    - [`capstone1_slide_deck.pdf`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_1/basketball/Individual_Player_Stats/Reports/capstone1_slide_deck.pdf): slide deck detailing background of analytics in the NBA, mental biases and assessment of models created to predict win share
+    - [`capstone1_comprehensive_report.pdf`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_1/basketball/Individual_Player_Stats/Reports/capstone1_comprehensive_report.pdf): report detailing entire workflow for project, from data wrangling and EDA to the development of machine learning models
    
