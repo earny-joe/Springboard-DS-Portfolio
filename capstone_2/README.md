@@ -18,6 +18,6 @@ Additionally, this project utilizes [fast.ai's deep learning library](https://ww
     - [`chexpert-eda.ipynb`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_2/exploration/chexpert-eda.ipynb): Jupyter Notebook that explores demographic aspects and pathology distribution within the training and validation data sets
 - `playground_nbs` - Folder that contains experimental notebooks from various stages of the model creation process
 - `reports` - Folder that contains [slide deck](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_2/reports/capstone_2_presentation_draft.pdf) detailing findings, and [milestone report](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_2/reports/milestone_report_1.pdf)/[final report](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_2/reports/final_report.pdf) that provides comprehensive analysis of entire workflow from data acquisition to training the deep learning model.
-- `trial30.ipynb` - Jupyter notebook that contains the entire model development process for the best performing model (AUC = ~ 0.82)
+- [`trial30.ipynb`](https://github.com/Jearny58/Springboard-DS-Portfolio/blob/master/capstone_2/trial30.ipynb) - Jupyter notebook that contains the entire model development process for the best performing model (AUC = ~ 0.82)
  
 
