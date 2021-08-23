@@ -87,7 +87,7 @@ jupyter-client==5.2.4
 jupyter-console==6.0.0
 jupyter-core==4.4.0
 jupyter-http-over-ws==0.0.6
-jupyterlab==0.35.5
+jupyterlab==1.2.21
 jupyterlab-server==0.2.0
 jupyterthemes==0.20.0
 Keras==2.2.4
