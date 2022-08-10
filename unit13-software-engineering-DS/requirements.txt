@@ -117,7 +117,7 @@ multipledispatch==0.6.0
 murmurhash==1.0.2
 nba-api==1.0.7
 nba-py==0.1.1a2
-nbconvert==5.5.0
+nbconvert==6.3.0
 nbformat==4.4.0
 networkx==2.3
 nltk==3.4.5
